@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Booking" ALTER COLUMN "status" SET DEFAULT 'AWAITINGPAYMENT',
+ALTER COLUMN "provider" SET DEFAULT 'AM';
+
+-- AlterTable
+ALTER TABLE "hotelBooking" ADD COLUMN     "checkInDate" VARCHAR(255),
+ALTER COLUMN "bookingStatus" SET DEFAULT 'AWAITINGPAYMENT';

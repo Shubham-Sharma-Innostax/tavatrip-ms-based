@@ -1,0 +1,269 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model promoCode {
+  id            String    @id @default(uuid()) @db.Text
+  code          String?   @db.VarChar(255)
+  description   String?   @db.VarChar(255)
+  type          String?   @db.VarChar(255)
+  value         Int?
+  expireOn      DateTime? @db.Timestamptz
+  startedFrom   DateTime? @db.Timestamptz
+  totalCount    Int?
+  consumedCount Int?
+  maxAmount     Decimal?
+}
+
+model RefundQueue {
+  id            String    @id @default(uuid()) @db.Text
+  tavaBookingId String?   @db.VarChar(255)
+  isCompleted   Boolean?  @default(false)
+  refundAmount  String?   @db.VarChar(255)
+  source        String?   @db.VarChar(255)
+  createdAt     DateTime? @default("2023-12-26T08:44:51.498Z") @db.Timestamptz(3)
+  updatedAt     DateTime? @default("2023-12-26T08:45:31.119Z") @db.Timestamptz(3)
+  remarks       Json?     @default("{}")
+  bookingId     String?   @db.VarChar(255)
+  paymentId     String?   @db.VarChar(255)
+  division      String    @default("FLIGHT") @db.VarChar(255)
+  currency      String?   @db.VarChar(255)
+}
+
+model travelers {
+  id             String   @id @default(uuid()) @db.Text
+  title          String?  @db.VarChar(255)
+  firstname      String?  @db.VarChar(255)
+  middlename     String?  @db.VarChar(255)
+  lastname       String?  @db.VarChar(255)
+  dateofbirth    String?  @db.VarChar(255)
+  passportnumber String?  @db.VarChar(255)
+  issuancedate   String?  @db.VarChar(255)
+  expirydate     String?  @db.VarChar(255)
+  gender         String?  @default("MALE") @db.VarChar(255)
+  primary        Boolean? @default(false)
+  countrycode    String?  @db.VarChar(255)
+  countryname    String?  @db.VarChar(255)
+  nationality    String?  @db.VarChar(255)
+  phonenumber    String?  @db.VarChar(255)
+  userId         String?  @db.VarChar(255)
+  Users          Users?   @relation(fields: [userId], references: [id])
+  email          String?  @db.VarChar(255)
+}
+
+model Reissuance {
+  id                String   @id @default(uuid()) @db.Text
+  pnr               String?  @db.VarChar(255)
+  providerBookingId String?  @db.VarChar(255)
+  tavaBookingId     String?  @db.VarChar(255)
+  status            String?  @db.VarChar(255)
+  paymentStatus     String?  @db.VarChar(255)
+  paymentSessionId  String?  @db.VarChar(255)
+  paymentId         String?  @db.VarChar(255)
+  orderType         String?  @db.VarChar(255)
+  ticketingJSON     Json?    @default("{}")
+  bookingId         String?  @db.VarChar(255)
+  Booking           Booking? @relation(fields: [bookingId], references: [id])
+  userEmail         String?  @db.VarChar(255)
+  provider          String?  @db.VarChar(255)
+}
+
+model duplicateBooking {
+  id               String  @id @default(uuid()) @db.Text
+  duplicateTavaId  String? @db.VarChar(255)
+  tavaBookingId    String? @db.VarChar(255)
+  correspondingPNR String? @db.VarChar(255)
+}
+
+model queries {
+  id        String    @id @default(uuid()) @db.Text
+  name      String?   @db.VarChar(255)
+  email     String?   @db.VarChar(255)
+  phone     String?   @db.VarChar(255)
+  message   String?   @db.VarChar(1024)
+  createdAt DateTime? @default("2024-01-05T12:01:10.299Z") @db.Timestamptz(3)
+  updatedAt DateTime? @default("2024-01-05T12:01:18.391Z") @db.Timestamptz(3)
+  status    String?   @default("OPEN") @db.VarChar(255)
+}
+
+model commissions {
+  id                 String    @id @default(uuid()) @db.Text
+  serviceType        String    @db.VarChar(255)
+  carrierCode        String    @db.VarChar(50)
+  providerName       String    @db.VarChar(255)
+  commission         Decimal
+  commissionType     String    @db.VarChar(100)
+  source             String    @db.VarChar(200)
+  destination        String    @db.VarChar(200)
+  effectiveStartDate DateTime  @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(3)
+  effectiveEndDate   DateTime  @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(3)
+  notes              String?   @db.VarChar(255)
+  createdAt          DateTime? @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(3)
+  updatedAt          DateTime? @db.Timestamptz(3)
+}
+
+model Booking {
+  id                String       @id @default(uuid()) @db.Text
+  tavaBookingId     String?      @db.VarChar(255)
+  providerBookingId String?      @db.VarChar(255)
+  pnr               String?      @db.VarChar(255)
+  status            String?      @default("AWAITINGPAYMENT") @db.VarChar(255)
+  provider          String?      @default("AM") @db.VarChar(255)
+  userEmail         String?      @db.VarChar(255)
+  paymentSessionId  String?      @db.VarChar(255)
+  paymentStatus     String?      @default("PENDING") @db.VarChar(255)
+  paymentId         String?      @db.VarChar(255)
+  orderType         String?      @default("INSTANT") @db.VarChar(255)
+  bookingJSON       Json?        @default("{}")
+  ticketingJSON     Json?        @default("{}")
+  ticketingStatus   String?      @default("PENDING") @db.VarChar(255)
+  cancelationStatus String?      @default("NOTAPPLIED") @db.VarChar(255)
+  createdAt         DateTime?    @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(0)
+  updatedAt         DateTime?    @default("2023-08-24T10:26:57.309Z") @db.Timestamptz(0)
+  corelationId      String?      @db.VarChar(255)
+  travelerEmail     String?      @db.VarChar(255)
+  departureDateTime String?      @db.VarChar(255)
+  Reissuance        Reissuance[]
+}
+
+model Users {
+  id               String      @id @default(uuid()) @db.Text
+  name             String?     @db.VarChar(255)
+  email            String?     @db.VarChar(255)
+  password         String?     @db.VarChar(255)
+  accessToken      String?     @db.VarChar(1024)
+  refreshToken     String?     @db.VarChar(1024)
+  phone            String?     @db.VarChar(255)
+  dateOfBirth      String?     @db.VarChar(255)
+  profilePic       String?     @db.VarChar(1024)
+  profileName      String?     @db.VarChar(1024)
+  role             String?     @default("USER") @db.VarChar(255)
+  provider         String?     @db.VarChar(255)
+  verificationCode String?     @db.VarChar(255)
+  codeTimestamp    DateTime?   @db.Timestamptz(3)
+  travelers        travelers[]
+}
+
+model specialServiceRuleTable {
+  id                            String   @id @default(uuid()) @db.Text
+  enable                        Boolean? @default(false)
+  currency                      String?  @db.VarChar(255)
+  origin                        String?  @db.VarChar(255)
+  destination                   String?  @db.VarChar(255)
+  carriercode                   String?  @db.VarChar(255)
+  offermeals                    Boolean? @default(false)
+  offerseats                    Boolean? @default(false)
+  Offerfrequentflyermiles       Boolean? @default(false)
+  offerpricewithincludedbaggage Boolean? @default(false)
+  indicators                    String?  @db.VarChar(255)
+  corporatecodes                String?  @db.VarChar(255)
+  request                       String?  @db.VarChar(255)
+}
+
+model payment {
+  id          String    @id @default(uuid()) @db.Text
+  enable      Boolean?  @default(false)
+  regionality String?   @default("DOMESTIC") @db.VarChar(255)
+  provider    String?   @db.VarChar(255)
+  validTill   DateTime? @default("2023-09-10T18:32:05.470Z") @db.Timestamptz(3)
+}
+
+model TicketingInfo {
+  id        String    @id @default(uuid()) @db.Text
+  bookingid String?   @db.VarChar(255)
+  ticketnbr String?   @db.VarChar(255)
+  status    String?   @default("PENDING") @db.VarChar(255)
+  reference String?   @db.VarChar(255)
+  createdAt DateTime? @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(3)
+  updatedAt DateTime? @default("2023-08-24T10:26:57.309Z") @db.Timestamptz(3)
+}
+
+model PaymentSession {
+  id             String  @id @default(uuid()) @db.Text
+  currency       String? @db.VarChar(255)
+  amount         Int?
+  session_status String? @db.VarChar(255)
+  session_id     String? @db.VarChar(255)
+  metadata       Json?   @default("{}")
+  createdAt      String? @db.VarChar(255)
+  expireAt       String? @db.VarChar(255)
+  paymentGateway String? @db.VarChar(255)
+  paymentId      String? @db.VarChar(255)
+  refundAmount   String? @db.VarChar(255)
+  division       String  @default("FLIGHT") @db.VarChar(255)
+  useremail      String? @db.VarChar(255)
+  paymentPageUrl String? @db.VarChar(255)
+  paymentresjson Json?   @default("{}")
+  refundresjson  String? @default("{}") @db.VarChar(1024)
+  paymentMethod String? @db.VarChar(255)
+}
+
+model serviceProviderStatus {
+  id       String   @id @default(uuid()) @db.Text
+  provider String?  @db.VarChar(255)
+  status   Boolean? @default(false)
+}
+
+model hotelCity {
+  id                String  @id @default(uuid()) @db.Text
+  destination       String? @db.VarChar(255)
+  stateProvince     String? @db.VarChar(255)
+  stateProvinceCode String? @db.VarChar(255)
+  country           String? @db.VarChar(255)
+  countryCode       String? @db.VarChar(255)
+}
+
+model hotelBooking {
+  id                  String    @id @default(uuid()) @db.VarChar(255)
+  tavaBookingId       String    @db.VarChar(255)
+  bookingStatus       String?   @default("AWAITINGPAYMENT") @db.VarChar(255)
+  bookingId           String?   @db.VarChar(255)
+  confirmationNo      String?   @db.VarChar(255)
+  bookingRefNo        String?   @db.VarChar(255)
+  invoiceNo           String?   @db.VarChar(255)
+  provider            String?   @default("TBO") @db.VarChar(255)
+  paymentStatus       String?   @default("PENDING") @db.VarChar(255)
+  paymentId           String?   @db.VarChar(255)
+  paymentSessionId    String?   @db.VarChar(255)
+  bookingResJson      Json?     @default("{}")
+  bookingReqJson      Json?     @default("{}")
+  blockRoomResJson    Json?     @default("{}")
+  blockRoomReqJson    Json?     @default("{}")
+  userEmail           String?   @db.VarChar(255)
+  guestEmail          String?   @db.VarChar(255)
+  cancelationStatus   String?   @default("NOT APPLIED") @db.VarChar(255)
+  corelationId        String?   @db.VarChar(255)
+  createdAt           DateTime? @default("2023-08-25T10:26:25.000Z") @db.Timestamptz(0)
+  updatedAt           DateTime? @default("2023-08-24T10:26:57.309Z") @db.Timestamptz(0)
+  voucherExpiryDate   String?   @db.VarChar(255)
+  isVoucheredBooking  Boolean?  @default(false)
+  getBookingDetailRes Json?     @default("{}")
+  checkInDate         String?   @db.VarChar(255)
+}
+
+model unsettledBooking {
+  id            String   @id @default(uuid()) @db.VarChar(255)
+  provider      String   @db.VarChar(255)
+  division      String   @default("FLIGHT") @db.VarChar(255)
+  isCompleted   Boolean? @default(false)
+  bookingId     String   @db.VarChar(255)
+  tavaBookingId String   @db.VarChar(255)
+  pnr           String?  @db.VarChar(255)
+  retryCount    Int
+}
+
+model logging {
+  id           String  @id @default(uuid()) @db.Text
+  corelationId String? @db.VarChar(255)
+  date         String? @db.VarChar(255)
+  serviceType  String? @db.VarChar(255)
+  logType      String? @db.VarChar(255)
+  log          Json?   @default("{}")
+  url          String? @db.VarChar(255)
+  bookingId    String? @db.VarChar(255)
+}

@@ -1,0 +1,26 @@
+# Node artifact files
+node_modules/
+dist/
+build/
+public/
+prisma/
+scripts/
+
+# Ignore these files:
+package-lock.json
+yarn.lock
+.git
+.gitignore
+README.md
+.prettierignore
+*.svg
+*.ico
+*.html
+*.png
+.env
+*.txt
+*.yml
+*.log
+*.ejs
+Dockerfile
+.dockerignore
